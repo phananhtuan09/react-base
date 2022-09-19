@@ -16,7 +16,7 @@ function Input({
         disabled={disabled}
         readOnly={readOnly}
         {...inputProps}
-        className={`${className} ${error ? 'error-input' : ''}`}
+        className={`${className} ${error && !value ? 'error-input' : ''}`}
       />
       {required && error && !value && <p className="error-text">{error}</p>}
     </>

@@ -16,6 +16,8 @@ function Login() {
         value={email}
         onChange={handleChangeEmail}
         className="email"
+        error="Required"
+        required
       />
     </>
   )
