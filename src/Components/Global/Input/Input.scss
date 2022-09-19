@@ -1,0 +1,15 @@
+@import '../../../assets/scss/main';
+input {
+  outline: none;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  padding: 4px 8px;
+}
+.error-text {
+  color: $errorText;
+  margin: 4px;
+  font-size: 14px;
+}
+input + p.error-text {
+  border-color: $errorText;
+}
