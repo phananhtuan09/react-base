@@ -7,11 +7,17 @@ function Input({
   error = null,
   value = null,
   required = false,
+  className = '',
   ...inputProps
 }) {
   return (
     <>
-      <input disabled={disabled} readOnly={readOnly} {...inputProps} />
+      <input
+        disabled={disabled}
+        readOnly={readOnly}
+        {...inputProps}
+        className={`${className} ${error ? 'error-input' : ''}`}
+      />
       {required && error && !value && <p className="error-text">{error}</p>}
     </>
   )

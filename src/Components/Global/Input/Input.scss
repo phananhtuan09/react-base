@@ -5,6 +5,9 @@ input {
   border-radius: 2px;
   padding: 4px 8px;
 }
+.error-input {
+  border-color: $errorText;
+}
 .error-text {
   color: $errorText;
   margin: 4px;
