@@ -1,12 +1,10 @@
 import React from 'react'
-import './Input.scss'
 
+import './Input.scss'
 function Input({
   disabled = false,
   readOnly = false,
   error = null,
-  value = null,
-  required = false,
   className = '',
   ...inputProps
 }) {
@@ -16,9 +14,9 @@ function Input({
         disabled={disabled}
         readOnly={readOnly}
         {...inputProps}
-        className={`${className} ${error && !value ? 'error-input' : ''}`}
+        className={`${className} ${error ? 'error-input' : ''}`}
       />
-      {required && error && !value && <p className="error-text">{error}</p>}
+      {error && <p className="error-text">{error}</p>}
     </>
   )
 }

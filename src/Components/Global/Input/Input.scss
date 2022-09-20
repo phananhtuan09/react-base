@@ -1,18 +1,30 @@
 @import '../../../assets/scss/main';
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 input {
   outline: none;
-  border: 1px solid #ccc;
-  border-radius: 2px;
+  font-size: 16px;
+  line-height: 28px;
   padding: 4px 8px;
+  width: 100%;
+  max-width: 100%;
+  min-height: 44px;
+  border-radius: 4px;
+  border: 1px solid rgba(84, 105, 212, 0.5);
+  background-color: rgb(255, 255, 255);
+  box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+    rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(60, 66, 87, 0.16) 0px 0px 0px 1px,
+    rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+    rgba(0, 0, 0, 0) 0px 0px 0px 0px;
 }
 .error-input {
   border-color: $errorText;
 }
 .error-text {
   color: $errorText;
-  margin: 4px;
+  margin: 8px;
   font-size: 14px;
-}
-input + p.error-text {
-  border-color: $errorText;
 }
