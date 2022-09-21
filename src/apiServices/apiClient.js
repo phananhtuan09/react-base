@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { stringify } from 'qs'
-const domainUrl = 'https://cataas.com/api/cats'
+// const domainUrl = process.env.REACT_APP_BASE_URL
+const domainUrl = 'https://gorest.co.in/public/v2'
 export const ApiClient = {
   getHeaders(contentType = 'application/x-www-form-urlencoded') {
     return {
@@ -21,40 +22,43 @@ export const ApiClient = {
     }
     return resultQuery
   },
-  handleFormKey(formKey, namespace, property) {
+  handleFormKey(namespace, property) {
     if (!namespace) {
-      formKey = property
-      return
+      return property
     }
+
     if (!isNaN(Number(property))) {
-      formKey = `${namespace}[${property}]`
-      return
-    } else {
-      formKey = `${namespace}.${property}`
+      return `${namespace}[${property}]`
     }
+    return `${namespace}.${property}`
   },
   handleObjProperty(fd, formKey, objElement) {
     if (objElement instanceof Date) {
       fd.append(formKey, objElement.toISOString())
+
       return
-    } else if (
+    }
+    if (
       typeof objElement === 'object' &&
       !(objElement instanceof File) &&
       !(objElement instanceof Blob)
     ) {
       this.convertToPostData(objElement, fd, formKey)
+
       return
-    } else {
-      fd.append(formKey, objElement)
     }
+    fd.append(formKey, objElement)
+    console.log('case3', objElement)
   },
   convertToPostData(obj, form, namespace) {
     const fd = form || new URLSearchParams()
+    console.log('fd1', fd)
     let formKey
     for (const property in obj) {
       if (Object.prototype.hasOwnProperty.call(obj, property)) {
-        this.handleFormKey(formKey, namespace, property)
+        formKey = this.handleFormKey(namespace, property)
         this.handleObjProperty(fd, formKey, obj[property])
+        console.log('fd2', fd)
       }
     }
     return fd
@@ -62,7 +66,7 @@ export const ApiClient = {
   // get
   async get(url = '', query = {}, params = {}) {
     let stringQuery = this.getStringQuery(query)
-    let requestUrl = `${url}?${stringQuery || ''}`
+    let requestUrl = !stringQuery ? url : `${url}?${stringQuery}`
     const response = await axios
       .get(domainUrl + requestUrl, {
         params,
@@ -74,11 +78,19 @@ export const ApiClient = {
   //post
   async post(url = '', query = {}, params = {}, appendUrl = '') {
     let stringQuery = this.getStringQuery(query)
-    let requestUrl = `${url}?${stringQuery || ''}${appendUrl || ''}`
+    let requestUrl = !stringQuery
+      ? url
+      : ` ${url}?${stringQuery}${appendUrl || ''}`
     const param = this.convertToPostData(params, undefined, undefined)
-    const config = {
-      headers: this.getHeaders('application/json'),
+    console.log('param', param)
+    let defaultHeaders = ApiClient.getHeaders()
+    const headers = {
+      Authorization: `Bearer ${'acc9682a3564246e3ba75d7938a3523e9ad9822d5718128a2d44303ac551f691'}`,
     }
+    const config = {
+      headers: Object.assign(defaultHeaders, headers),
+    }
+
     const response = await axios
       .post(domainUrl + requestUrl, param, config)
       .catch((error) => console.log(error))
@@ -86,7 +98,7 @@ export const ApiClient = {
   },
   async postJsonData(url = '', query = {}, params = {}) {
     let stringQuery = this.getStringQuery(query)
-    const requestUrl = `${url}?${stringQuery || ''}`
+    const requestUrl = !stringQuery ? url : `${url}?${stringQuery}`
 
     const config = {
       headers: this.getHeaders('application/json'),
@@ -99,7 +111,7 @@ export const ApiClient = {
   },
   async postMultipleData(url = '', query = {}, params = {}) {
     let stringQuery = this.getStringQuery(query)
-    const requestUrl = `${url}?${stringQuery || ''}`
+    const requestUrl = !stringQuery ? url : `${url}?${stringQuery}`
 
     const config = {
       headers: this.getHeaders('multipart/form-data'),
@@ -113,7 +125,7 @@ export const ApiClient = {
   },
   async postFile(url = '', query = {}, fileKey = '', file) {
     let stringQuery = this.getStringQuery(query)
-    const requestUrl = `${url}?${stringQuery || ''}`
+    const requestUrl = !stringQuery ? url : `${url}?${stringQuery}`
     const config = {
       headers: this.getHeaders(),
     }
@@ -128,7 +140,7 @@ export const ApiClient = {
   //put
   async putJsonData(url = '', query = {}, params = {}) {
     let stringQuery = this.getStringQuery(query)
-    const requestUrl = `${url}?${stringQuery || ''}`
+    const requestUrl = !stringQuery ? url : `${url}?${stringQuery}`
 
     const config = {
       headers: this.getHeaders('application/json'),
@@ -141,7 +153,7 @@ export const ApiClient = {
   },
   async putJsonDataArr(url = '', query = {}, params = {}) {
     let stringQuery = this.getStringQuery(query)
-    const requestUrl = `${url}?${stringQuery || ''}`
+    const requestUrl = !stringQuery ? url : `${url}?${stringQuery}`
 
     const config = {
       headers: this.getHeaders('application/json'),
@@ -154,7 +166,7 @@ export const ApiClient = {
   },
   async put(url = '', query = {}, params = {}) {
     let stringQuery = this.getStringQuery(query)
-    const requestUrl = `${url}?${stringQuery || ''}`
+    const requestUrl = !stringQuery ? url : `${url}?${stringQuery}`
     const config = {
       headers: this.getHeaders(),
     }
@@ -167,7 +179,7 @@ export const ApiClient = {
   //delete
   async delete(url = '', params = {}) {
     let stringQuery = this.getStringQuery(params)
-    const requestUrl = `${url}?${stringQuery || ''}`
+    const requestUrl = !stringQuery ? url : `${url}?${stringQuery}`
 
     const config = {
       headers: this.getHeaders(),
