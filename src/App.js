@@ -1,8 +1,8 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { publicRoutes } from '@/routes/publicRoutes'
 import React, { Fragment, Suspense, useEffect } from 'react'
+import * as testApi from '@/apiServices/testApi'
 
-import * as apiServices from '@/apiServices/getTodo'
 const DefaultLayout = React.lazy(() =>
   import('@/Components/Layout/DefaultLayout')
 )
@@ -11,8 +11,8 @@ const NotFoundPage = React.lazy(() => import('@/Pages/NotFound'))
 function App() {
   useEffect(() => {
     const fetchApi = async () => {
-      const todo = await apiServices.getTodo(3)
-      console.log(todo)
+      const result = await testApi.getTodo()
+      console.log(result)
     }
     fetchApi()
   }, [])

@@ -10,8 +10,14 @@
     "react/prop-types": 0,
     "indent": ["error", 2],
     "linebreak-style": 1,
-    "quotes": ["warn", "double"],
-    "import/no-unresolved": ["off", 2]
+    "quotes": ["warn", "single"],
+    "import/no-unresolved": ["off", 2],
+    "for-direction": ["error"],
+    "no-cond-assign": ["error", "always"],
+    "no-const-assign": ["error"],
+    "no-duplicate-imports": ["error", { "includeExports": true }],
+    "no-dupe-keys": ["error"],
+    "no-empty-character-class": ["error"]
   },
   "parserOptions": {
     "ecmaVersion": 2021,
