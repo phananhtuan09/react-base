@@ -1,15 +1,26 @@
 import axios from 'axios'
 import { stringify } from 'qs'
 // const domainUrl = process.env.REACT_APP_BASE_URL
-const domainUrl = 'https://gorest.co.in/public/v2'
+const domainUrl = 'https://reqres.in/api'
+const accessToken = ''
 export const ApiClient = {
   getHeaders(contentType = 'application/x-www-form-urlencoded') {
     return {
       'Content-Type': contentType,
       'Access-Control-Allow-Origin': '*',
+      authorization: `Bearer ${accessToken}`,
     }
   },
+  //convert object to query string
   getStringQuery(query = {}, options = {}) {
+    /* *
+        query = object(valid or empty)
+             + valid => string query
+             + empty => return false
+        query = string(valid or empty)
+             + valid => not change
+             + empty => return false       
+    */
     let resultQuery = query
     if (
       typeof resultQuery === 'object' &&
@@ -48,17 +59,40 @@ export const ApiClient = {
       return
     }
     fd.append(formKey, objElement)
-    console.log('case3', objElement)
+  },
+  catchErrorRequest(error) {
+    if (error.response) {
+      /*
+       * The request was made and the server responded with a
+       * status code that falls out of the range of 2xx
+       */
+      let errorResponse = {
+        message: error.message,
+        status: error.response.status,
+        headers: error.response.headers,
+      }
+
+      return errorResponse
+    } else if (error.request) {
+      /*
+       * The request was made but no response was received, `error.request`
+       * is an instance of XMLHttpRequest in the browser and an instance
+       * of http.ClientRequest in Node.js
+       */
+      return error.request
+    } else {
+      // Something happened in setting up the request and triggered an Error
+      return { Error: error.message }
+    }
   },
   convertToPostData(obj, form, namespace) {
     const fd = form || new URLSearchParams()
-    console.log('fd1', fd)
+
     let formKey
     for (const property in obj) {
       if (Object.prototype.hasOwnProperty.call(obj, property)) {
         formKey = this.handleFormKey(namespace, property)
         this.handleObjProperty(fd, formKey, obj[property])
-        console.log('fd2', fd)
       }
     }
     return fd
@@ -72,7 +106,7 @@ export const ApiClient = {
         params,
         headers: this.getHeaders(),
       })
-      .catch((error) => console.log(error))
+      .catch((error) => this.catchErrorRequest(error))
     return response
   },
   //post
@@ -82,18 +116,14 @@ export const ApiClient = {
       ? url
       : ` ${url}?${stringQuery}${appendUrl || ''}`
     const param = this.convertToPostData(params, undefined, undefined)
-    console.log('param', param)
-    let defaultHeaders = ApiClient.getHeaders()
-    const headers = {
-      Authorization: `Bearer ${'acc9682a3564246e3ba75d7938a3523e9ad9822d5718128a2d44303ac551f691'}`,
-    }
+
     const config = {
-      headers: Object.assign(defaultHeaders, headers),
+      headers: this.getHeaders(),
     }
 
     const response = await axios
       .post(domainUrl + requestUrl, param, config)
-      .catch((error) => console.log(error))
+      .catch((error) => this.catchErrorRequest(error))
     return response
   },
   async postJsonData(url = '', query = {}, params = {}) {
@@ -106,7 +136,7 @@ export const ApiClient = {
 
     const response = await axios
       .post(domainUrl + requestUrl, params, config)
-      .catch((error) => console.log(error))
+      .catch((error) => this.catchErrorRequest(error))
     return response
   },
   async postMultipleData(url = '', query = {}, params = {}) {
@@ -120,7 +150,7 @@ export const ApiClient = {
     const param = this.convertToPostData(params, form, undefined)
     const response = await axios
       .post(domainUrl + requestUrl, param, config)
-      .catch((error) => console.log(error))
+      .catch((error) => this.catchErrorRequest(error))
     return response
   },
   async postFile(url = '', query = {}, fileKey = '', file) {
@@ -134,7 +164,7 @@ export const ApiClient = {
     formData.append(fileKey, file)
     const response = await axios
       .post(domainUrl + requestUrl, formData, config)
-      .catch((error) => console.log(error))
+      .catch((error) => this.catchErrorRequest(error))
     return response
   },
   //put
@@ -148,7 +178,7 @@ export const ApiClient = {
 
     const response = await axios
       .put(domainUrl + requestUrl, params, config)
-      .catch((error) => console.log(error))
+      .catch((error) => this.catchErrorRequest(error))
     return response
   },
   async putJsonDataArr(url = '', query = {}, params = {}) {
@@ -161,7 +191,7 @@ export const ApiClient = {
 
     const response = await axios
       .put(domainUrl + requestUrl, params, config)
-      .catch((error) => console.log(error))
+      .catch((error) => this.catchErrorRequest(error))
     return response
   },
   async put(url = '', query = {}, params = {}) {
@@ -170,10 +200,10 @@ export const ApiClient = {
     const config = {
       headers: this.getHeaders(),
     }
-
     const response = await axios
       .put(domainUrl + requestUrl, params, config)
-      .catch((error) => console.log(error))
+      .catch((error) => this.catchErrorRequest(error))
+
     return response
   },
   //delete
@@ -187,7 +217,7 @@ export const ApiClient = {
 
     const response = await axios
       .delete(domainUrl + requestUrl, config)
-      .catch((error) => console.log(error))
+      .catch((error) => this.catchErrorRequest(error))
     return response
   },
 
@@ -199,7 +229,7 @@ export const ApiClient = {
     }
     const response = axios
       .delete(domainUrl + requestUrl, config)
-      .catch((error) => console.log(error))
+      .catch((error) => this.catchErrorRequest(error))
     return response
   },
 }
